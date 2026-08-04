@@ -179,6 +179,28 @@
     height: 84px;
   }
 
+  .gust{
+    position:absolute;
+    top: -34px;
+    left: -30%;
+    width: 46%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.9), rgba(233,199,137,0.9), transparent);
+    filter: blur(1px);
+    opacity:0;
+    pointer-events:none;
+    z-index:3;
+  }
+  .cake.sweeping .gust{
+    animation: gust-sweep 0.9s cubic-bezier(.4,0,.2,1) forwards;
+  }
+  @keyframes gust-sweep{
+    0%   { opacity:0; transform: translateX(0); }
+    8%   { opacity:1; }
+    88%  { opacity:1; }
+    100% { opacity:0; transform: translateX(330%); }
+  }
+
   .tier{
     position:absolute;
     left:50%;
@@ -370,7 +392,24 @@
     pointer-events:none;
   }
 
-  .hint{
+  .card-bare{
+    text-align:center;
+    padding: 8px 20px 0;
+    border:none;
+    background:none;
+    backdrop-filter:none;
+    box-shadow:none;
+  }
+
+  .whisper{
+    font-family:'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 500;
+    font-size: clamp(1.4rem, 4.2vw, 1.8rem);
+    letter-spacing: 0.03em;
+    color: var(--gold-bright);
+    opacity: 0.92;
+  }
     margin-top:16px;
     font-family:'Cormorant Garamond', serif;
     font-style: italic;
@@ -381,6 +420,17 @@
     transition: opacity 0.6s ease;
   }
   .hint.show{ opacity:0.85; }
+
+  .hint#cakeHint{
+    font-family:'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--gold-bright);
+    margin-top: 46px;
+  }
 
   .sub-hint{
     font-family:'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -440,7 +490,6 @@
         <div class="rule"></div>
         <p class="message">What a beautiful and meaningful amount of <span class="heart">soul</span> one person can hold!</p>
         <button id="celebrateBtn">Make a Wish</button>
-        <div class="hint" id="hint">it had to be you</div>
       </div>
     </div>
 
@@ -448,6 +497,7 @@
     <div class="scene" id="sceneCake" hidden>
       <div class="cake-wrap">
         <div class="cake">
+          <div class="gust"></div>
           <div class="tier tier-top"></div>
           <div class="tier tier-bottom"></div>
           <div class="ribbon"></div>
@@ -496,13 +546,10 @@
         </div>
       </div>
 
-      <div class="card">
-        <div class="eyebrow">And more</div>
-        <h1 style="font-size: clamp(1.8rem, 5.4vw, 2.4rem);">Then let it be<em style="display:inline;"> three</em></h1>
-        <div class="rule"></div>
-        <p class="message" id="cakeMessage">Blow each flame, and make it whole.</p>
-        <div class="hint" id="cakeHint">It had to be you!</div>
+      <div class="card card-bare">
+        <p class="whisper">and even more</p>
       </div>
+      <div class="hint" id="cakeHint">It had to be you!</div>
     </div>
 
   </div>
@@ -512,9 +559,7 @@
   const sceneCake = document.getElementById('sceneCake');
   const wrap = document.getElementById('candleWrap');
   const btn = document.getElementById('celebrateBtn');
-  const hint = document.getElementById('hint');
   const cakeHint = document.getElementById('cakeHint');
-  const cakeMessage = document.getElementById('cakeMessage');
   let wishMade = false;
 
   function petalBurst(count){
@@ -556,7 +601,6 @@
     if(!wishMade){
       wrap.classList.add('blown');
       petalBurst(46);
-      hint.classList.add('show');
       btn.textContent = 'You Can Always Have More';
       wishMade = true;
       return;
@@ -578,23 +622,28 @@
     }, 650);
   }
 
-  // ---- Scene 2: cake, 3 candles ----
+  // ---- Scene 2: cake, 3 candles blown in one elegant left-to-right sweep ----
   const miniWraps = Array.from(document.querySelectorAll('.mini-candle-wrap'));
-  let blownCount = 0;
+  const cakeEl = document.querySelector('.cake');
+  let sweepStarted = false;
+
+  function startSweep(){
+    if(sweepStarted) return;
+    sweepStarted = true;
+    cakeEl.classList.add('sweeping');
+    miniWraps.forEach((w, i) => {
+      setTimeout(() => w.classList.add('blown'), 160 + i * 210);
+    });
+    setTimeout(finale, 160 + miniWraps.length * 210 + 400);
+  }
 
   miniWraps.forEach(w => {
-    w.querySelector('.mini-flame').addEventListener('click', () => {
-      if(w.classList.contains('blown')) return;
-      w.classList.add('blown');
-      blownCount++;
-      if(blownCount === miniWraps.length){
-        setTimeout(finale, 500);
-      }
-    });
+    w.querySelector('.mini-flame').addEventListener('click', startSweep);
   });
+  cakeEl.addEventListener('click', startSweep);
+  cakeEl.style.cursor = 'pointer';
 
   function finale(){
-    cakeMessage.textContent = 'Every flame, a year well loved.';
     cakeHint.classList.add('show');
     petalBurst(70);
   }
