@@ -19,7 +19,6 @@
   }
 
   *{ margin:0; padding:0; box-sizing:border-box; }
-
   html, body{ height:100%; }
 
   body{
@@ -38,7 +37,6 @@
     padding: 32px;
   }
 
-  /* fine film-grain / vignette for depth, no cheap gradient look */
   body::before{
     content:"";
     position:fixed; inset:0;
@@ -50,14 +48,31 @@
   .stage{
     position:relative;
     z-index:2;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
     max-width: 480px;
     width:100%;
   }
 
-  /* ---------- candle, the signature element ---------- */
+  .scene{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    transition: opacity 0.7s ease, transform 0.7s cubic-bezier(.2,.7,.3,1);
+  }
+  .scene[hidden]{ display:none; }
+  .scene.leaving{
+    opacity:0;
+    transform: scale(0.94) translateY(-6px);
+  }
+  .scene.entering{
+    opacity:0;
+    transform: scale(1.04) translateY(6px);
+  }
+  .scene.entering.in{
+    opacity:1;
+    transform: scale(1) translateY(0);
+  }
+
+  /* ---------- single candle ---------- */
   .candle-wrap{
     position:relative;
     height: 150px;
@@ -86,7 +101,7 @@
     position:relative;
     box-shadow: inset -4px 0 6px rgba(0,0,0,0.12), 0 6px 18px rgba(0,0,0,0.35);
   }
-  .candle::before{ /* wax drip */
+  .candle::before{
     content:"";
     position:absolute;
     top:-2px; left:50%;
@@ -113,8 +128,9 @@
     transform: translateX(-50%);
     transform-origin: bottom center;
     animation: flicker 2.6s ease-in-out infinite;
+    cursor:pointer;
   }
-  .flame svg{ width:100%; height:100%; display:block; }
+  .flame svg{ width:100%; height:100%; display:block; pointer-events:none; }
 
   @keyframes flicker{
     0%, 100% { transform: translateX(-50%) rotate(-2deg) scaleY(1); }
@@ -129,10 +145,7 @@
     opacity:0;
     transform: translateX(-50%) translateY(-14px) scale(0.4);
   }
-  .candle-wrap.blown .wick{
-    height: 3px;
-    opacity: 0.6;
-  }
+  .candle-wrap.blown .wick{ height: 3px; opacity: 0.6; }
   .candle-wrap.blown .flame-glow{ opacity:0; }
 
   .smoke{
@@ -144,13 +157,125 @@
     opacity:0;
     pointer-events:none;
   }
-  .candle-wrap.blown .smoke{
-    animation: smoke-rise 1.6s ease-out forwards;
-  }
+  .candle-wrap.blown .smoke{ animation: smoke-rise 1.6s ease-out forwards; }
   @keyframes smoke-rise{
     0%   { opacity:0.7; transform: translate(-50%,0) scale(1); }
     100% { opacity:0; transform: translate(-70%,-70px) scale(6); }
   }
+
+  /* ---------- cake scene ---------- */
+  .cake-wrap{
+    position:relative;
+    height: 170px;
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
+    margin-bottom: -6px;
+  }
+
+  .cake{
+    position:relative;
+    width: 210px;
+    height: 84px;
+  }
+
+  .tier{
+    position:absolute;
+    left:50%;
+    transform: translateX(-50%);
+    border-radius: 8px 8px 5px 5px;
+    box-shadow: 0 22px 44px rgba(0,0,0,0.45), inset 0 2px 0 rgba(255,255,255,0.35);
+  }
+  .tier-bottom{
+    bottom:0;
+    width: 210px;
+    height: 46px;
+    background: linear-gradient(180deg, #f4ead9, #e2d1ab);
+  }
+  .tier-top{
+    bottom: 40px;
+    width: 150px;
+    height: 40px;
+    background: linear-gradient(180deg, #f7efe0, #e7d8bd);
+  }
+  .ribbon{
+    position:absolute;
+    left:50%;
+    transform: translateX(-50%);
+    bottom: 14px;
+    width: 210px;
+    height: 6px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    opacity:0.7;
+  }
+
+  .mini-candle-wrap{
+    position:absolute;
+    bottom: 78px;
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
+    width: 40px;
+  }
+  .mini-candle-wrap.pos-0{ left: 27%; transform: translateX(-50%); }
+  .mini-candle-wrap.pos-1{ left: 50%; transform: translateX(-50%); }
+  .mini-candle-wrap.pos-2{ left: 73%; transform: translateX(-50%); }
+
+  .mini-candle{
+    width: 12px;
+    height: 46px;
+    background: linear-gradient(180deg, #f7f0e4, #e7dcc7);
+    border-radius: 2px 2px 1px 1px;
+    position:relative;
+    box-shadow: inset -2px 0 4px rgba(0,0,0,0.12), 0 4px 10px rgba(0,0,0,0.3);
+  }
+  .mini-flame-glow{
+    position:absolute;
+    top:-6px; left:50%;
+    transform: translateX(-50%);
+    width:64px; height:64px;
+    background: radial-gradient(circle, rgba(233,199,137,0.32), transparent 65%);
+    filter: blur(2px);
+    opacity: 1;
+    transition: opacity 0.9s ease;
+    pointer-events:none;
+  }
+  .mini-wick{
+    position:absolute;
+    top:-11px; left:50%;
+    width:1.5px; height:11px;
+    background:#3a2e28;
+    transform: translateX(-50%);
+    transition: height 0.5s ease, opacity 0.5s ease;
+  }
+  .mini-flame{
+    position:absolute;
+    top:-30px; left:50%;
+    width: 11px; height: 24px;
+    transform: translateX(-50%);
+    transform-origin: bottom center;
+    animation: flicker 2.3s ease-in-out infinite;
+    cursor:pointer;
+  }
+  .mini-flame svg{ width:100%; height:100%; display:block; pointer-events:none; }
+  .mini-candle-wrap.blown .mini-flame{
+    animation:none;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    opacity:0;
+    transform: translateX(-50%) translateY(-10px) scale(0.4);
+  }
+  .mini-candle-wrap.blown .mini-wick{ height:2px; opacity:0.6; }
+  .mini-candle-wrap.blown .mini-flame-glow{ opacity:0; }
+  .mini-smoke{
+    position:absolute;
+    top:-30px; left:50%;
+    width:2.5px; height:2.5px;
+    border-radius:50%;
+    background: rgba(220,210,200,0.55);
+    opacity:0;
+    pointer-events:none;
+  }
+  .mini-candle-wrap.blown .mini-smoke{ animation: smoke-rise 1.4s ease-out forwards; }
 
   /* ---------- card ---------- */
   .card{
@@ -162,6 +287,7 @@
     backdrop-filter: blur(6px);
     box-shadow: 0 30px 60px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.04);
     position:relative;
+    width:100%;
   }
 
   .eyebrow{
@@ -205,6 +331,7 @@
     line-height:1.5;
     max-width: 340px;
     margin: 0 auto 30px;
+    transition: opacity 0.4s ease;
   }
   .message .heart{ color: var(--rose); font-style:normal; }
 
@@ -221,7 +348,7 @@
     font-weight:600;
     backdrop-filter: blur(14px) saturate(140%);
     -webkit-backdrop-filter: blur(14px) saturate(140%);
-    transition: transform 0.35s cubic-bezier(.2,.7,.3,1), box-shadow 0.35s ease, background 0.35s ease, border-color 0.35s ease;
+    transition: transform 0.35s cubic-bezier(.2,.7,.3,1), box-shadow 0.35s ease, background 0.35s ease, border-color 0.35s ease, opacity 0.35s ease;
     box-shadow:
       0 8px 24px rgba(0,0,0,0.35),
       inset 0 1px 0 rgba(255,255,255,0.25),
@@ -237,21 +364,36 @@
       inset 0 -1px 0 rgba(0,0,0,0.15),
       0 0 24px rgba(205,161,94,0.18);
   }
-  button:active{
-    transform: translateY(0) scale(0.98);
+  button:active{ transform: translateY(0) scale(0.98); }
+  button[disabled]{
+    opacity:0;
+    pointer-events:none;
   }
 
   .hint{
     margin-top:16px;
-    font-size:11px;
-    letter-spacing:0.08em;
-    color: var(--ink-dim);
+    font-family:'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size:15px;
+    letter-spacing:0.02em;
+    color: var(--gold-bright);
     opacity:0;
     transition: opacity 0.6s ease;
   }
-  .hint.show{ opacity:0.55; }
+  .hint.show{ opacity:0.85; }
 
-  /* ---------- petals (elegant confetti replacement) ---------- */
+  .sub-hint{
+    font-family:'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    opacity: 0.5;
+    margin-top: -14px;
+    margin-bottom: 26px;
+  }
+
+  /* ---------- petals ---------- */
   .petal{
     position:fixed;
     top:-24px;
@@ -263,49 +405,120 @@
 
   @media (max-width: 420px){
     .card{ padding: 38px 26px 34px; }
+    .cake, .tier-bottom, .ribbon{ width: 180px; }
+    .tier-top{ width: 128px; }
   }
 
   @media (prefers-reduced-motion: reduce){
-    .flame, .candle-wrap.blown .flame, button, .rule{ animation: none !important; transition:none !important; }
+    .flame, .mini-flame, .candle-wrap.blown .flame, .mini-candle-wrap.blown .mini-flame, button, .rule, .scene{ animation: none !important; transition:none !important; }
   }
 </style>
 </head>
 <body>
 
-  <div class="stage">
-    <div class="candle-wrap" id="candleWrap">
-      <div class="flame-glow"></div>
-      <div class="smoke"></div>
-      <div class="candle">
-        <div class="wick" id="wick"></div>
-        <div class="flame" id="flame">
-          <svg viewBox="0 0 16 34" xmlns="http://www.w3.org/2000/svg">
-            <path d="M8 0 C 12 8, 16 13, 11 20 C 15 22, 13 30, 8 34 C 3 30, 1 22, 5 20 C 0 13, 4 8, 8 0 Z" fill="#f4a545"/>
-            <path d="M8 8 C 10 13, 12 16, 9 20 C 11 21, 10 26, 8 29 C 6 26, 5 21, 7 20 C 4 16, 6 13, 8 8 Z" fill="#ffe9a8"/>
-          </svg>
+  <div class="stage" id="stage">
+
+    <!-- SCENE 1: single candle -->
+    <div class="scene" id="sceneSingle">
+      <div class="candle-wrap" id="candleWrap">
+        <div class="flame-glow"></div>
+        <div class="smoke"></div>
+        <div class="candle">
+          <div class="wick" id="wick"></div>
+          <div class="flame" id="flame">
+            <svg viewBox="0 0 16 34" xmlns="http://www.w3.org/2000/svg">
+              <path d="M8 0 C 12 8, 16 13, 11 20 C 15 22, 13 30, 8 34 C 3 30, 1 22, 5 20 C 0 13, 4 8, 8 0 Z" fill="#f4a545"/>
+              <path d="M8 8 C 10 13, 12 16, 9 20 C 11 21, 10 26, 8 29 C 6 26, 5 21, 7 20 C 4 16, 6 13, 8 8 Z" fill="#ffe9a8"/>
+            </svg>
+          </div>
         </div>
+      </div>
+
+      <div class="card">
+        <div class="eyebrow">A moment, just for you</div>
+        <h1>Happy Birthday<em>Nyatigo</em></h1>
+        <div class="rule"></div>
+        <p class="message">What a beautiful and meaningful amount of <span class="heart">soul</span> one person can hold!</p>
+        <button id="celebrateBtn">Make a Wish</button>
+        <div class="hint" id="hint">it had to be you</div>
       </div>
     </div>
 
-    <div class="card">
-      <div class="eyebrow">A moment, just for you</div>
-      <h1>Happy Birthday<em>Nyatigo</em></h1>
-      <div class="rule"></div>
-      <p class="message">What a beautiful and meaningful amount of <span class="heart">soul</span> one person can hold!</p>
-      <button id="celebrateBtn">Make a Wish</button>
-      <div class="hint" id="hint">It had to be you!</div>
+    <!-- SCENE 2: cake with 3 candles -->
+    <div class="scene" id="sceneCake" hidden>
+      <div class="cake-wrap">
+        <div class="cake">
+          <div class="tier tier-top"></div>
+          <div class="tier tier-bottom"></div>
+          <div class="ribbon"></div>
+
+          <div class="mini-candle-wrap pos-0" data-idx="0">
+            <div class="mini-flame-glow"></div>
+            <div class="mini-smoke"></div>
+            <div class="mini-candle">
+              <div class="mini-wick"></div>
+              <div class="mini-flame">
+                <svg viewBox="0 0 16 34" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M8 0 C 12 8, 16 13, 11 20 C 15 22, 13 30, 8 34 C 3 30, 1 22, 5 20 C 0 13, 4 8, 8 0 Z" fill="#f4a545"/>
+                  <path d="M8 8 C 10 13, 12 16, 9 20 C 11 21, 10 26, 8 29 C 6 26, 5 21, 7 20 C 4 16, 6 13, 8 8 Z" fill="#ffe9a8"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="mini-candle-wrap pos-1" data-idx="1">
+            <div class="mini-flame-glow"></div>
+            <div class="mini-smoke"></div>
+            <div class="mini-candle">
+              <div class="mini-wick"></div>
+              <div class="mini-flame">
+                <svg viewBox="0 0 16 34" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M8 0 C 12 8, 16 13, 11 20 C 15 22, 13 30, 8 34 C 3 30, 1 22, 5 20 C 0 13, 4 8, 8 0 Z" fill="#f4a545"/>
+                  <path d="M8 8 C 10 13, 12 16, 9 20 C 11 21, 10 26, 8 29 C 6 26, 5 21, 7 20 C 4 16, 6 13, 8 8 Z" fill="#ffe9a8"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="mini-candle-wrap pos-2" data-idx="2">
+            <div class="mini-flame-glow"></div>
+            <div class="mini-smoke"></div>
+            <div class="mini-candle">
+              <div class="mini-wick"></div>
+              <div class="mini-flame">
+                <svg viewBox="0 0 16 34" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M8 0 C 12 8, 16 13, 11 20 C 15 22, 13 30, 8 34 C 3 30, 1 22, 5 20 C 0 13, 4 8, 8 0 Z" fill="#f4a545"/>
+                  <path d="M8 8 C 10 13, 12 16, 9 20 C 11 21, 10 26, 8 29 C 6 26, 5 21, 7 20 C 4 16, 6 13, 8 8 Z" fill="#ffe9a8"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="eyebrow">And more</div>
+        <h1 style="font-size: clamp(1.8rem, 5.4vw, 2.4rem);">Then let it be<em style="display:inline;"> three</em></h1>
+        <div class="rule"></div>
+        <p class="message" id="cakeMessage">Blow each flame, and make it whole.</p>
+        <div class="hint" id="cakeHint">It had to be you!</div>
+      </div>
     </div>
+
   </div>
 
 <script>
-  const btn = document.getElementById('celebrateBtn');
+  const sceneSingle = document.getElementById('sceneSingle');
+  const sceneCake = document.getElementById('sceneCake');
   const wrap = document.getElementById('candleWrap');
+  const btn = document.getElementById('celebrateBtn');
   const hint = document.getElementById('hint');
-  let done = false;
+  const cakeHint = document.getElementById('cakeHint');
+  const cakeMessage = document.getElementById('cakeMessage');
+  let wishMade = false;
 
-  function petalBurst(){
+  function petalBurst(count){
     const colors = ['#cda15e', '#e9c789', '#d99a92', '#f4ead9'];
-    const count = 46;
     for(let i=0;i<count;i++){
       const p = document.createElement('div');
       p.className = 'petal';
@@ -338,21 +551,53 @@
     }
   }
 
+  // ---- Scene 1: single candle ----
   btn.addEventListener('click', () => {
-    if(done){
-      // relight small ambient moment on repeat click
-      wrap.classList.remove('blown');
-      done = false;
-      hint.classList.remove('show');
-      btn.textContent = 'Make a Wish';
+    if(!wishMade){
+      wrap.classList.add('blown');
+      petalBurst(46);
+      hint.classList.add('show');
+      btn.textContent = 'You Can Always Have More';
+      wishMade = true;
       return;
     }
-    wrap.classList.add('blown');
-    petalBurst();
-    hint.classList.add('show');
-    btn.textContent = 'You Can Always Have More';
-    done = true;
+    transitionToCake();
   });
+
+  function transitionToCake(){
+    btn.setAttribute('disabled','');
+    sceneSingle.classList.add('leaving');
+    setTimeout(() => {
+      sceneSingle.setAttribute('hidden','');
+      sceneCake.removeAttribute('hidden');
+      sceneCake.classList.add('entering');
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => sceneCake.classList.add('in'));
+      });
+      petalBurst(20);
+    }, 650);
+  }
+
+  // ---- Scene 2: cake, 3 candles ----
+  const miniWraps = Array.from(document.querySelectorAll('.mini-candle-wrap'));
+  let blownCount = 0;
+
+  miniWraps.forEach(w => {
+    w.querySelector('.mini-flame').addEventListener('click', () => {
+      if(w.classList.contains('blown')) return;
+      w.classList.add('blown');
+      blownCount++;
+      if(blownCount === miniWraps.length){
+        setTimeout(finale, 500);
+      }
+    });
+  });
+
+  function finale(){
+    cakeMessage.textContent = 'Every flame, a year well loved.';
+    cakeHint.classList.add('show');
+    petalBurst(70);
+  }
 </script>
 
 </body>
