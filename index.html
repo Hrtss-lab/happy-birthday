@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Happy Birthday, Nyatigo</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=Inter:wght@300;400;500&family=Manrope:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --ink: #f4ead9;
@@ -165,9 +165,10 @@
   }
 
   .eyebrow{
-    font-family:'Inter', sans-serif;
+    font-family:'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-weight: 600;
     font-size: 11px;
-    letter-spacing: 0.32em;
+    letter-spacing: 0.28em;
     text-transform: uppercase;
     color: var(--gold);
     opacity:0.85;
@@ -208,26 +209,37 @@
   .message .heart{ color: var(--rose); font-style:normal; }
 
   button{
-    font-family:'Inter', sans-serif;
-    font-size: 13px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--plum-1);
-    background: linear-gradient(180deg, var(--gold-bright), var(--gold));
-    border: none;
-    padding: 15px 34px;
-    border-radius: 2px;
+    font-family:'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 13.5px;
+    letter-spacing: 0.05em;
+    color: var(--gold-bright);
+    background: linear-gradient(180deg, rgba(255,255,255,0.14), rgba(255,255,255,0.04));
+    border: 1px solid rgba(233,199,137,0.35);
+    padding: 15px 36px;
+    border-radius: 14px;
     cursor:pointer;
-    font-weight:500;
-    transition: transform 0.35s cubic-bezier(.2,.7,.3,1), box-shadow 0.35s ease, letter-spacing 0.35s ease;
-    box-shadow: 0 10px 24px rgba(205,161,94,0.25);
+    font-weight:600;
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    transition: transform 0.35s cubic-bezier(.2,.7,.3,1), box-shadow 0.35s ease, background 0.35s ease, border-color 0.35s ease;
+    box-shadow:
+      0 8px 24px rgba(0,0,0,0.35),
+      inset 0 1px 0 rgba(255,255,255,0.25),
+      inset 0 -1px 0 rgba(0,0,0,0.15);
   }
   button:hover{
     transform: translateY(-2px);
-    letter-spacing: 0.18em;
-    box-shadow: 0 14px 30px rgba(205,161,94,0.35);
+    background: linear-gradient(180deg, rgba(255,255,255,0.20), rgba(255,255,255,0.06));
+    border-color: rgba(233,199,137,0.55);
+    box-shadow:
+      0 12px 30px rgba(0,0,0,0.4),
+      inset 0 1px 0 rgba(255,255,255,0.3),
+      inset 0 -1px 0 rgba(0,0,0,0.15),
+      0 0 24px rgba(205,161,94,0.18);
   }
-  button:active{ transform: translateY(0); }
+  button:active{
+    transform: translateY(0) scale(0.98);
+  }
 
   .hint{
     margin-top:16px;
@@ -279,9 +291,9 @@
       <div class="eyebrow">A moment, just for you</div>
       <h1>Happy Birthday<em>Nyatigo</em></h1>
       <div class="rule"></div>
-      <p class="message">Wishing you a year as rich and warm as this candlelight — <span class="heart">and a pocket full of soul.</span></p>
+      <p class="message">What a beautiful and meaningful amount of <span class="heart">soul</span> one person can hold!</p>
       <button id="celebrateBtn">Make a Wish</button>
-      <div class="hint" id="hint">wish made — carry it well</div>
+      <div class="hint" id="hint">it had to be you</div>
     </div>
   </div>
 
@@ -338,7 +350,7 @@
     wrap.classList.add('blown');
     petalBurst();
     hint.classList.add('show');
-    btn.textContent = 'Relight the Candle';
+    btn.textContent = 'You Can Always Have More';
     done = true;
   });
 </script>
