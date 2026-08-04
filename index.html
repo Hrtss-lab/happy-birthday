@@ -427,7 +427,25 @@
     margin-bottom: 26px;
   }
 
-  /* ---------- petals ---------- */
+  .tap-cue{
+    font-family:'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: var(--gold);
+    opacity: 0;
+    margin-top: 14px;
+    margin-bottom: 4px;
+    transition: opacity 0.8s ease;
+  }
+  .tap-cue.show{
+    animation: cue-breathe 2.6s ease-in-out infinite;
+  }
+  @keyframes cue-breathe{
+    0%, 100% { opacity: 0.4; }
+    50%      { opacity: 0.85; }
+  }
   .petal{
     position:fixed;
     top:-24px;
@@ -561,6 +579,8 @@
         </div>
       </div>
 
+      <div class="tap-cue" id="tapCue">touch a flame</div>
+
       <div class="card card-bare">
         <p class="whisper">and even more</p>
       </div>
@@ -575,6 +595,7 @@
   const wrap = document.getElementById('candleWrap');
   const btn = document.getElementById('celebrateBtn');
   const cakeHint = document.getElementById('cakeHint');
+  const tapCue = document.getElementById('tapCue');
   let wishMade = false;
 
   function petalBurst(count){
@@ -711,6 +732,7 @@
       requestAnimationFrame(() => {
         requestAnimationFrame(() => sceneCake.classList.add('in'));
       });
+      setTimeout(() => tapCue.classList.add('show'), 900);
       risingLights(14);
     }, 650);
   }
@@ -723,6 +745,8 @@
   function startSweep(){
     if(sweepStarted) return;
     sweepStarted = true;
+    tapCue.classList.remove('show');
+    tapCue.style.opacity = '0';
     miniWraps.forEach((w, i) => {
       const start = 160 + i * 240;
       setTimeout(() => w.classList.add('stretching'), start);
