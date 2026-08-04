@@ -139,28 +139,32 @@
     75%      { transform: translateX(-50%) rotate(3deg) scaleY(1.02); }
   }
 
+  .candle-wrap.stretching .flame{
+    animation-play-state: paused;
+    transition: transform 0.26s cubic-bezier(.2,.6,.3,1), filter 0.26s ease;
+    transform: translateX(-50%) scaleX(2.4) scaleY(0.3) translateX(10px);
+    filter: brightness(1.7) saturate(1.1);
+  }
+  .candle-wrap.stretching .flame-glow{
+    transition: transform 0.26s ease, opacity 0.26s ease;
+    transform: scaleX(1.7) scaleY(0.55);
+    opacity: 1;
+  }
   .candle-wrap.blown .flame{
     animation: none;
-    transition: opacity 0.4s ease, transform 0.4s ease;
+    transition: opacity 0.16s ease;
     opacity:0;
-    transform: translateX(-50%) translateY(-14px) scale(0.4);
   }
   .candle-wrap.blown .wick{ height: 3px; opacity: 0.6; }
-  .candle-wrap.blown .flame-glow{ opacity:0; }
+  .candle-wrap.blown .flame-glow{ opacity:0; transition: opacity 0.5s ease; }
 
-  .smoke{
+  .ember{
     position:absolute;
-    top:-46px; left:50%;
-    width:3px; height:3px;
+    left:50%;
     border-radius:50%;
-    background: rgba(220,210,200,0.55);
-    opacity:0;
+    background: radial-gradient(circle, #fff8e7, #e9c789 55%, transparent 78%);
     pointer-events:none;
-  }
-  .candle-wrap.blown .smoke{ animation: smoke-rise 1.6s ease-out forwards; }
-  @keyframes smoke-rise{
-    0%   { opacity:0.7; transform: translate(-50%,0) scale(1); }
-    100% { opacity:0; transform: translate(-70%,-70px) scale(6); }
+    z-index:4;
   }
 
   /* ---------- cake scene ---------- */
@@ -177,28 +181,6 @@
     position:relative;
     width: 210px;
     height: 84px;
-  }
-
-  .gust{
-    position:absolute;
-    top: -34px;
-    left: -30%;
-    width: 46%;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.9), rgba(233,199,137,0.9), transparent);
-    filter: blur(1px);
-    opacity:0;
-    pointer-events:none;
-    z-index:3;
-  }
-  .cake.sweeping .gust{
-    animation: gust-sweep 0.9s cubic-bezier(.4,0,.2,1) forwards;
-  }
-  @keyframes gust-sweep{
-    0%   { opacity:0; transform: translateX(0); }
-    8%   { opacity:1; }
-    88%  { opacity:1; }
-    100% { opacity:0; transform: translateX(330%); }
   }
 
   .tier{
@@ -280,24 +262,25 @@
     cursor:pointer;
   }
   .mini-flame svg{ width:100%; height:100%; display:block; pointer-events:none; }
+  .mini-candle-wrap.stretching .mini-flame{
+    animation-play-state: paused;
+    transition: transform 0.24s cubic-bezier(.2,.6,.3,1), filter 0.24s ease;
+    transform: translateX(-50%) scaleX(2.3) scaleY(0.3) translateX(8px);
+    filter: brightness(1.7) saturate(1.1);
+  }
+  .mini-candle-wrap.stretching .mini-flame-glow{
+    transition: transform 0.24s ease, opacity 0.24s ease;
+    transform: translateX(-50%) scaleX(1.6) scaleY(0.55);
+    opacity: 1;
+  }
   .mini-candle-wrap.blown .mini-flame{
-    animation:none;
-    transition: opacity 0.4s ease, transform 0.4s ease;
+    animation: none;
+    transition: opacity 0.14s ease;
     opacity:0;
-    transform: translateX(-50%) translateY(-10px) scale(0.4);
   }
   .mini-candle-wrap.blown .mini-wick{ height:2px; opacity:0.6; }
-  .mini-candle-wrap.blown .mini-flame-glow{ opacity:0; }
-  .mini-smoke{
-    position:absolute;
-    top:-30px; left:50%;
-    width:2.5px; height:2.5px;
-    border-radius:50%;
-    background: rgba(220,210,200,0.55);
-    opacity:0;
-    pointer-events:none;
-  }
-  .mini-candle-wrap.blown .mini-smoke{ animation: smoke-rise 1.4s ease-out forwards; }
+  .mini-candle-wrap.blown .mini-flame-glow{ opacity:0; transition: opacity 0.5s ease; }
+
 
   /* ---------- card ---------- */
   .card{
@@ -410,6 +393,7 @@
     color: var(--gold-bright);
     opacity: 0.92;
   }
+  .hint{
     margin-top:16px;
     font-family:'Cormorant Garamond', serif;
     font-style: italic;
@@ -453,6 +437,14 @@
     will-change: transform, opacity;
   }
 
+  .wish-light{
+    position:fixed;
+    z-index:5;
+    border-radius:50%;
+    pointer-events:none;
+    will-change: transform, opacity;
+  }
+
   @media (max-width: 420px){
     .card{ padding: 38px 26px 34px; }
     .cake, .tier-bottom, .ribbon{ width: 180px; }
@@ -460,7 +452,7 @@
   }
 
   @media (prefers-reduced-motion: reduce){
-    .flame, .mini-flame, .candle-wrap.blown .flame, .mini-candle-wrap.blown .mini-flame, button, .rule, .scene{ animation: none !important; transition:none !important; }
+    .flame, .mini-flame, .candle-wrap.blown .flame, .mini-candle-wrap.blown .mini-flame, .candle-wrap.stretching .flame, .mini-candle-wrap.stretching .mini-flame, button, .rule, .scene{ animation: none !important; transition:none !important; }
   }
 </style>
 </head>
@@ -472,13 +464,19 @@
     <div class="scene" id="sceneSingle">
       <div class="candle-wrap" id="candleWrap">
         <div class="flame-glow"></div>
-        <div class="smoke"></div>
         <div class="candle">
           <div class="wick" id="wick"></div>
           <div class="flame" id="flame">
             <svg viewBox="0 0 16 34" xmlns="http://www.w3.org/2000/svg">
-              <path d="M8 0 C 12 8, 16 13, 11 20 C 15 22, 13 30, 8 34 C 3 30, 1 22, 5 20 C 0 13, 4 8, 8 0 Z" fill="#f4a545"/>
-              <path d="M8 8 C 10 13, 12 16, 9 20 C 11 21, 10 26, 8 29 C 6 26, 5 21, 7 20 C 4 16, 6 13, 8 8 Z" fill="#ffe9a8"/>
+              <defs>
+                <radialGradient id="flameGradMain" cx="48%" cy="70%" r="72%">
+                  <stop offset="0%" stop-color="#fff8e7"/>
+                  <stop offset="34%" stop-color="#ffe19a"/>
+                  <stop offset="70%" stop-color="#f2a53f"/>
+                  <stop offset="100%" stop-color="#d97a2e"/>
+                </radialGradient>
+              </defs>
+              <path d="M8 1 C 10.8 8 13.5 13 10.2 18.5 C 13.2 21 12.3 28 8 33 C 3.7 28 2.8 21 5.8 18.5 C 2.5 13 5.2 8 8 1 Z" fill="url(#flameGradMain)"/>
             </svg>
           </div>
         </div>
@@ -497,20 +495,25 @@
     <div class="scene" id="sceneCake" hidden>
       <div class="cake-wrap">
         <div class="cake">
-          <div class="gust"></div>
           <div class="tier tier-top"></div>
           <div class="tier tier-bottom"></div>
           <div class="ribbon"></div>
 
           <div class="mini-candle-wrap pos-0" data-idx="0">
             <div class="mini-flame-glow"></div>
-            <div class="mini-smoke"></div>
             <div class="mini-candle">
               <div class="mini-wick"></div>
               <div class="mini-flame">
                 <svg viewBox="0 0 16 34" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M8 0 C 12 8, 16 13, 11 20 C 15 22, 13 30, 8 34 C 3 30, 1 22, 5 20 C 0 13, 4 8, 8 0 Z" fill="#f4a545"/>
-                  <path d="M8 8 C 10 13, 12 16, 9 20 C 11 21, 10 26, 8 29 C 6 26, 5 21, 7 20 C 4 16, 6 13, 8 8 Z" fill="#ffe9a8"/>
+                  <defs>
+                    <radialGradient id="flameGradMini0" cx="48%" cy="70%" r="72%">
+                      <stop offset="0%" stop-color="#fff8e7"/>
+                      <stop offset="34%" stop-color="#ffe19a"/>
+                      <stop offset="70%" stop-color="#f2a53f"/>
+                      <stop offset="100%" stop-color="#d97a2e"/>
+                    </radialGradient>
+                  </defs>
+                  <path d="M8 1 C 10.8 8 13.5 13 10.2 18.5 C 13.2 21 12.3 28 8 33 C 3.7 28 2.8 21 5.8 18.5 C 2.5 13 5.2 8 8 1 Z" fill="url(#flameGradMini0)"/>
                 </svg>
               </div>
             </div>
@@ -518,13 +521,19 @@
 
           <div class="mini-candle-wrap pos-1" data-idx="1">
             <div class="mini-flame-glow"></div>
-            <div class="mini-smoke"></div>
             <div class="mini-candle">
               <div class="mini-wick"></div>
               <div class="mini-flame">
                 <svg viewBox="0 0 16 34" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M8 0 C 12 8, 16 13, 11 20 C 15 22, 13 30, 8 34 C 3 30, 1 22, 5 20 C 0 13, 4 8, 8 0 Z" fill="#f4a545"/>
-                  <path d="M8 8 C 10 13, 12 16, 9 20 C 11 21, 10 26, 8 29 C 6 26, 5 21, 7 20 C 4 16, 6 13, 8 8 Z" fill="#ffe9a8"/>
+                  <defs>
+                    <radialGradient id="flameGradMini1" cx="48%" cy="70%" r="72%">
+                      <stop offset="0%" stop-color="#fff8e7"/>
+                      <stop offset="34%" stop-color="#ffe19a"/>
+                      <stop offset="70%" stop-color="#f2a53f"/>
+                      <stop offset="100%" stop-color="#d97a2e"/>
+                    </radialGradient>
+                  </defs>
+                  <path d="M8 1 C 10.8 8 13.5 13 10.2 18.5 C 13.2 21 12.3 28 8 33 C 3.7 28 2.8 21 5.8 18.5 C 2.5 13 5.2 8 8 1 Z" fill="url(#flameGradMini1)"/>
                 </svg>
               </div>
             </div>
@@ -532,13 +541,19 @@
 
           <div class="mini-candle-wrap pos-2" data-idx="2">
             <div class="mini-flame-glow"></div>
-            <div class="mini-smoke"></div>
             <div class="mini-candle">
               <div class="mini-wick"></div>
               <div class="mini-flame">
                 <svg viewBox="0 0 16 34" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M8 0 C 12 8, 16 13, 11 20 C 15 22, 13 30, 8 34 C 3 30, 1 22, 5 20 C 0 13, 4 8, 8 0 Z" fill="#f4a545"/>
-                  <path d="M8 8 C 10 13, 12 16, 9 20 C 11 21, 10 26, 8 29 C 6 26, 5 21, 7 20 C 4 16, 6 13, 8 8 Z" fill="#ffe9a8"/>
+                  <defs>
+                    <radialGradient id="flameGradMini2" cx="48%" cy="70%" r="72%">
+                      <stop offset="0%" stop-color="#fff8e7"/>
+                      <stop offset="34%" stop-color="#ffe19a"/>
+                      <stop offset="70%" stop-color="#f2a53f"/>
+                      <stop offset="100%" stop-color="#d97a2e"/>
+                    </radialGradient>
+                  </defs>
+                  <path d="M8 1 C 10.8 8 13.5 13 10.2 18.5 C 13.2 21 12.3 28 8 33 C 3.7 28 2.8 21 5.8 18.5 C 2.5 13 5.2 8 8 1 Z" fill="url(#flameGradMini2)"/>
                 </svg>
               </div>
             </div>
@@ -596,11 +611,89 @@
     }
   }
 
+  function spawnEmbers(wrapEl, originTop, scale){
+    const count = 5 + Math.floor(Math.random()*3);
+    for(let i=0;i<count;i++){
+      const e = document.createElement('div');
+      e.className = 'ember';
+      const size = (1.6 + Math.random()*2.2) * scale;
+      e.style.width = size + 'px';
+      e.style.height = size + 'px';
+      e.style.top = originTop + 'px';
+      e.style.transform = 'translateX(-50%)';
+      e.style.opacity = '0';
+      wrapEl.appendChild(e);
+
+      const dx = (16 + Math.random()*30) * scale;
+      const dy = -(26 + Math.random()*36) * scale;
+      const dur = 650 + Math.random()*450;
+      const delay = Math.random()*90;
+
+      e.animate([
+        { transform: `translate(-50%,0) scale(1)`, opacity: 0.95 },
+        { transform: `translate(calc(-50% + ${dx*0.55}px), ${dy*0.5}px) scale(0.85)`, opacity: 0.85, offset: 0.4 },
+        { transform: `translate(calc(-50% + ${dx}px), ${dy}px) scale(0.15)`, opacity: 0 }
+      ], {
+        duration: dur,
+        delay: delay,
+        easing: 'cubic-bezier(.2,.6,.3,1)',
+        fill: 'forwards'
+      });
+
+      setTimeout(() => e.remove(), dur + delay + 60);
+    }
+  }
+
+  function risingLights(count){
+    for(let i=0;i<count;i++){
+      const l = document.createElement('div');
+      l.className = 'wish-light';
+      const size = 3 + Math.random()*5;
+      const warmth = Math.random();
+      const core = warmth > 0.5 ? '#fff3d6' : '#e9c789';
+      l.style.width = size + 'px';
+      l.style.height = size + 'px';
+      l.style.background = `radial-gradient(circle, ${core}, rgba(233,199,137,0.5) 55%, transparent 75%)`;
+      l.style.boxShadow = `0 0 ${size*2.4}px ${size*0.7}px rgba(233,199,137,0.35)`;
+
+      const startX = Math.random()*100;
+      const sway = (Math.random()-0.5)*70;
+      const rise = 100 + Math.random()*20;
+      const duration = 4 + Math.random()*3.5;
+      const delay = Math.random()*1.4;
+
+      l.style.left = startX + 'vw';
+      l.style.top = '100vh';
+      l.style.opacity = '0';
+
+      document.body.appendChild(l);
+
+      l.animate([
+        { transform: `translate(0, 0)`, opacity: 0 },
+        { transform: `translate(${sway*0.3}px, -${rise*0.25}vh)`, opacity: 0.9, offset: 0.18 },
+        { transform: `translate(${sway*0.7}px, -${rise*0.7}vh)`, opacity: 0.75, offset: 0.65 },
+        { transform: `translate(${sway}px, -${rise}vh)`, opacity: 0 }
+      ], {
+        duration: duration*1000,
+        delay: delay*1000,
+        easing: 'cubic-bezier(.25,.4,.3,1)',
+        fill: 'forwards'
+      });
+
+      setTimeout(() => l.remove(), (duration+delay)*1000 + 200);
+    }
+  }
+
   // ---- Scene 1: single candle ----
   btn.addEventListener('click', () => {
     if(!wishMade){
-      wrap.classList.add('blown');
-      petalBurst(46);
+      wrap.classList.add('stretching');
+      setTimeout(() => {
+        wrap.classList.remove('stretching');
+        wrap.classList.add('blown');
+        spawnEmbers(wrap, -40, 1.4);
+      }, 260);
+      risingLights(34);
       btn.textContent = 'You Can Always Have More';
       wishMade = true;
       return;
@@ -618,7 +711,7 @@
       requestAnimationFrame(() => {
         requestAnimationFrame(() => sceneCake.classList.add('in'));
       });
-      petalBurst(20);
+      risingLights(14);
     }, 650);
   }
 
@@ -630,11 +723,16 @@
   function startSweep(){
     if(sweepStarted) return;
     sweepStarted = true;
-    cakeEl.classList.add('sweeping');
     miniWraps.forEach((w, i) => {
-      setTimeout(() => w.classList.add('blown'), 160 + i * 210);
+      const start = 160 + i * 240;
+      setTimeout(() => w.classList.add('stretching'), start);
+      setTimeout(() => {
+        w.classList.remove('stretching');
+        w.classList.add('blown');
+        spawnEmbers(w, -26, 0.85);
+      }, start + 240);
     });
-    setTimeout(finale, 160 + miniWraps.length * 210 + 400);
+    setTimeout(finale, 160 + miniWraps.length * 240 + 500);
   }
 
   miniWraps.forEach(w => {
